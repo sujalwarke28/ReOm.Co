@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: reomco-postgres
+    environment:
+      POSTGRES_USER: reomco_admin
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: reomco_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - reomco-network
+
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile
+    container_name: reomco-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://reomco_admin:mysecretpassword@postgres:5432/reomco_db?schema=public
+      - JWT_SECRET=supersecretkey_dev
+    depends_on:
+      - postgres
+    networks:
+      - reomco-network
+
+  frontend:
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile
+    container_name: reomco-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - reomco-network
+
+networks:
+  reomco-network:
+    driver: bridge
+
+volumes:
+  pgdata:

@@ -1,0 +1,50 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies & Build Backend
+        run: |
+          cd apps/backend
+          npm ci
+          npx prisma generate
+          npm run build
+
+      - name: Install Dependencies & Build Frontend
+        run: |
+          cd apps/frontend
+          npm ci
+          npm run build
+
+  deploy:
+    needs: build-and-lint
+    runs-on: ubuntu-latest
+    # Only deploy if secrets are configured
+    if: ${{ env.EC2_HOST != '' }}
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /opt/reomco
+            git pull origin main
+            sudo chmod +x scripts/deploy.sh
+            sudo ./scripts/deploy.sh

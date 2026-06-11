@@ -1,0 +1,130 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  Admin
+  Manager
+  OperationalStaff
+  Executive
+}
+
+enum TaskStatus {
+  Pending
+  Completed
+}
+
+enum ApprovalStatus {
+  Pending
+  Approved
+  Rejected
+}
+
+enum AlertSeverity {
+  Low
+  Medium
+  High
+  Critical
+}
+
+enum AlertStatus {
+  Active
+  Resolved
+}
+
+model User {
+  id             String     @id @default(uuid())
+  username       String     @unique
+  email          String     @unique
+  password_hash  String
+  role           Role       @default(OperationalStaff)
+  created_at     DateTime   @default(now())
+
+  // Relations
+  tasks_assigned Task[]     @relation("TaskAssignee")
+  tasks_created  Task[]     @relation("TaskCreator")
+
+  approvals_submitted Approval[] @relation("ApprovalSubmitter")
+  approvals_approved  Approval[] @relation("ApprovalApprover")
+
+  reports_generated Report[] @relation("ReportGenerator")
+
+  audit_logs        AuditLog[] @relation("AuditLogActor")
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  title       String
+  description String
+  status      TaskStatus @default(Pending)
+  
+  assigned_to String?
+  assignee    User?      @relation("TaskAssignee", fields: [assigned_to], references: [id])
+  
+  created_by  String
+  creator     User       @relation("TaskCreator", fields: [created_by], references: [id])
+  
+  created_at  DateTime   @default(now())
+}
+
+model Approval {
+  id            String         @id @default(uuid())
+  request_title String
+  status        ApprovalStatus @default(Pending)
+  
+  submitted_by  String
+  submitter     User           @relation("ApprovalSubmitter", fields: [submitted_by], references: [id])
+  
+  approved_by   String?
+  approver      User?          @relation("ApprovalApprover", fields: [approved_by], references: [id])
+  
+  created_at    DateTime       @default(now())
+}
+
+model Report {
+  id           String   @id @default(uuid())
+  report_name  String
+  
+  generated_by String
+  generator    User     @relation("ReportGenerator", fields: [generated_by], references: [id])
+  
+  created_at   DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  actor_id  String
+  actor     User     @relation("AuditLogActor", fields: [actor_id], references: [id])
+  action    String
+  timestamp DateTime @default(now())
+}
+
+model Alert {
+  id         String        @id @default(uuid())
+  alert_type String
+  severity   AlertSeverity
+  status     AlertStatus   @default(Active)
+  timestamp  DateTime      @default(now())
+}
+
+enum PricingStatus {
+  Active
+  Inactive
+}
+
+model PricingRule {
+  id           String        @id @default(uuid())
+  product_name String
+  channel      String
+  price        Float
+  status       PricingStatus @default(Active)
+  updated_at   DateTime      @updatedAt
+  created_at   DateTime      @default(now())
+}
