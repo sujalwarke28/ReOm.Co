@@ -12,7 +12,7 @@ const fetchExecutiveSummary = async () => {
 };
 
 const ExecutivePortal: React.FC = () => {
-  const { data, isLoading, error } = useQuery({ queryKey: ['executiveSummary'], queryKeyFn: () => null, queryFn: fetchExecutiveSummary, retry: false });
+  const { data, isLoading, error } = useQuery<any>({ queryKey: ['executiveSummary'], queryFn: fetchExecutiveSummary, retry: false });
 
   if (isLoading) return <div className="p-4 text-center">Loading Executive Portal...</div>;
   if (error) return <div className="p-4 text-danger text-center">Access Denied or Error loading data. This portal is restricted to Executive role.</div>;
