@@ -8,7 +8,6 @@
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "CommonJS",
-    "moduleResolution": "node",
     "target": "ES2022",
     "types": [],
     // For nodejs:
@@ -26,7 +25,6 @@
 
     // Recommended Options
     "strict": true,
-    "skipLibCheck": true,
-    "ignoreDeprecations": "6.0"
+    "skipLibCheck": true
   }
 }

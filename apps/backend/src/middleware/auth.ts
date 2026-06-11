@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 
@@ -19,7 +19,7 @@ export const authenticateJWT = (req: AuthRequest, res: Response, next: NextFunct
       return res.status(401).json({ success: false, message: 'Bearer token missing' });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET as string, (err, user) => {
+    jwt.verify(token, process.env.JWT_SECRET as string, (err: any, user: any) => {
       if (err) {
         return res.status(403).json({ success: false, message: 'Invalid or expired token', error: err.message });
       }
