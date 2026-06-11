@@ -1,0 +1,17 @@
+{
+  "name": "reom.co",
+  "version": "1.0.0",
+  "description": "RetailEdge Omnichannel Commerce Cloud (ReOm.Co)",
+  "scripts": {
+    "install:all": "npm install --prefix apps/backend && npm install --prefix apps/frontend",
+    "dev:backend": "npm run dev --prefix apps/backend",
+    "dev:frontend": "npm run dev --prefix apps/frontend",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build:backend": "npm run build --prefix apps/backend",
+    "build:frontend": "npm run build --prefix apps/frontend",
+    "build": "npm run build:backend && npm run build:frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
