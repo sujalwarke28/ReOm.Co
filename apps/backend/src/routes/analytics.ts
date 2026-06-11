@@ -15,8 +15,8 @@ router.get('/tasks', async (req: Request, res: Response) => {
     });
     
     // Format for Chart.js
-    const labels = tasksAgg.map(t => t.status);
-    const data = tasksAgg.map(t => t._count.id);
+    const labels = tasksAgg.map((t: any) => t.status);
+    const data = tasksAgg.map((t: any) => t._count.id);
     
     res.json({ success: true, data: { labels, data } });
   } catch (error: any) {
@@ -32,8 +32,8 @@ router.get('/approvals', async (req: Request, res: Response) => {
       _count: { id: true }
     });
 
-    const labels = approvalsAgg.map(a => a.status);
-    const data = approvalsAgg.map(a => a._count.id);
+    const labels = approvalsAgg.map((a: any) => a.status);
+    const data = approvalsAgg.map((a: any) => a._count.id);
     
     res.json({ success: true, data: { labels, data } });
   } catch (error: any) {
@@ -49,7 +49,7 @@ router.get('/departments', async (req: Request, res: Response) => {
     const users = await prisma.user.findMany({ include: { _count: { select: { tasks_created: true } } } });
     
     const roleMap: Record<string, number> = {};
-    users.forEach(u => {
+    users.forEach((u: any) => {
       roleMap[u.role] = (roleMap[u.role] || 0) + u._count.tasks_created;
     });
 
