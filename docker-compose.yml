@@ -1,19 +1,6 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:15-alpine
-    container_name: reomco-postgres
-    environment:
-      POSTGRES_USER: reomco_admin
-      POSTGRES_PASSWORD: mysecretpassword
-      POSTGRES_DB: reomco_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - reomco-network
 
   backend:
     build:
@@ -24,10 +11,8 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://reomco_admin:mysecretpassword@postgres:5432/reomco_db?schema=public
+      - DATABASE_URL=postgresql://neondb_owner:npg_ojeZnCJc02Bk@ep-long-tree-atppuuu0.c-9.us-east-1.aws.neon.tech/neondb?sslmode=require
       - JWT_SECRET=supersecretkey_dev
-    depends_on:
-      - postgres
     networks:
       - reomco-network
 
@@ -47,5 +32,4 @@ networks:
   reomco-network:
     driver: bridge
 
-volumes:
-  pgdata:
+
