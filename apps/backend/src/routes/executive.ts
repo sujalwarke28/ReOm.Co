@@ -6,7 +6,7 @@ import prisma from '../prisma';
 const router = Router();
 
 router.use(authenticateJWT);
-router.use(authorizeRoles('Executive'));
+router.use(authorizeRoles('Admin', 'Executive'));
 
 // GET /api/executive/summary
 router.get('/summary', async (req: AuthRequest, res: Response) => {

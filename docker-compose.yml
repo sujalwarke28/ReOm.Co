@@ -11,7 +11,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://neondb_owner:npg_ojeZnCJc02Bk@ep-long-tree-atppuuu0.c-9.us-east-1.aws.neon.tech/neondb?sslmode=require
+      - DATABASE_URL=mysql://admin:12345678@retailedge-db.cluster-crausyiq2p70.ap-south-1.rds.amazonaws.com:3306/retailedge
       - JWT_SECRET=supersecretkey_dev
     networks:
       - reomco-network

@@ -1,0 +1,31 @@
+The technical requirements must remain almost identical:
+
+- Cloud Architecture
+- Linux Administration
+- EC2/VM Deployment
+- MySQL/MariaDB
+- Docker
+- VPC & Networking
+- Monitoring
+- Automation Scripts
+- Pricing Analysis
+- Reporting Dashboards
+
+
+AWS Services:
+- EC2
+- RDS
+- S3
+- VPC
+- CloudWatch
+- IAM
+
+
+You are expected to build:
+
+- A small web application related to your assigned business domain.
+- Deploy it on AWS.
+- Demonstrate cloud infrastructure concepts.
+- Demonstrate monitoring, networking, security and automation.
+- Provide pricing estimates.
+

@@ -1,10 +1,12 @@
 import { Router, Request, Response } from 'express';
 import { authenticateJWT } from '../middleware/auth';
 import prisma from '../prisma';
+import { authorizeRoles } from '../middleware/rbac';
 
 const router = Router();
 
 router.use(authenticateJWT);
+router.use(authorizeRoles('Admin', 'Manager', 'Executive'));
 
 // GET /api/analytics/tasks
 router.get('/tasks', async (req: Request, res: Response) => {

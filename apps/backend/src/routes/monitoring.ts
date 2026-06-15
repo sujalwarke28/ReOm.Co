@@ -7,7 +7,7 @@ import prisma from '../prisma';
 const router = Router();
 
 router.use(authenticateJWT);
-router.use(authorizeRoles('Admin', 'Executive'));
+router.use(authorizeRoles('Admin'));
 
 // GET /api/monitoring/metrics
 router.get('/metrics', async (req: AuthRequest, res: Response) => {

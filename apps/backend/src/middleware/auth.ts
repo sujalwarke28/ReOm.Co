@@ -12,14 +12,17 @@ export interface AuthRequest extends Request {
 
 export const authenticateJWT = (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
+  const queryToken = req.query.token as string;
 
-  if (authHeader) {
-    const token = authHeader.split(' ')[1];
-    if (!token) {
-      return res.status(401).json({ success: false, message: 'Bearer token missing' });
-    }
+  let token = '';
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1] || '';
+  } else if (queryToken) {
+    token = queryToken;
+  }
 
-    jwt.verify(token, process.env.JWT_SECRET as string, (err: any, user: any) => {
+  if (token) {
+    jwt.verify(token, JWT_SECRET, (err: any, user: any) => {
       if (err) {
         return res.status(403).json({ success: false, message: 'Invalid or expired token', error: err.message });
       }

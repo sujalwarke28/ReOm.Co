@@ -1,9 +1,10 @@
 # Stage 1: Build
-FROM node:22-alpine AS builder
+FROM node:22-bookworm-slim AS builder
 
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies (Debian uses apt-get, but openssl is included in bookworm-slim)
+RUN apt-get update -y && apt-get install -y openssl
 COPY package*.json ./
 RUN npm install
 
@@ -15,11 +16,12 @@ RUN npx prisma generate
 RUN npm run build
 
 # Stage 2: Production
-FROM node:22-alpine
+FROM node:22-bookworm-slim
 
 WORKDIR /app
 
 # Copy package files and install only production dependencies
+RUN apt-get update -y && apt-get install -y openssl
 COPY package*.json ./
 RUN npm install --production
 

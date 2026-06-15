@@ -1,26 +1,39 @@
 import { PrismaClient, Role } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient({});
 
 async function main() {
   console.log('Seeding database...');
-  
-  // Note: We are using a placeholder password hash here for the seed.
-  // In a real application, you would use bcrypt.hash()
-  const passwordHash = '$2b$10$X8O.N9V2z1g2p7x6Q8uOheM8Q2zZ8o2Y4x1G6Q9A5Z3x2w1v0'; // "admin123" dummy hash
 
-  const adminUser = await prisma.user.upsert({
-    where: { email: 'admin@reom.co' },
-    update: {},
-    create: {
-      username: 'admin',
-      email: 'admin@reom.co',
-      password_hash: passwordHash,
-      role: Role.Admin,
-    },
+  // Hash the new password "1234" using bcrypt (10 salt rounds)
+  const passwordHash = await bcrypt.hash('1234', 10);
+
+  await prisma.user.upsert({
+    where: { email: 'sujal@admin.com' },
+    update: { password_hash: passwordHash, status: 'Approved' },
+    create: { username: 'admin_user', email: 'sujal@admin.com', password_hash: passwordHash, role: Role.Admin, status: 'Approved' },
   });
 
-  console.log('Database seeded! Admin user created with email: admin@reom.co');
+  await prisma.user.upsert({
+    where: { email: 'sujal@manager.com' },
+    update: { password_hash: passwordHash, status: 'Approved' },
+    create: { username: 'manager_user', email: 'sujal@manager.com', password_hash: passwordHash, role: Role.Manager, status: 'Approved' },
+  });
+
+  await prisma.user.upsert({
+    where: { email: 'sujal@ops.com' },
+    update: { password_hash: passwordHash, status: 'Approved' },
+    create: { username: 'ops_user', email: 'sujal@ops.com', password_hash: passwordHash, role: Role.OperationalStaff, status: 'Approved' },
+  });
+
+  await prisma.user.upsert({
+    where: { email: 'sujal@exec.com' },
+    update: { password_hash: passwordHash, status: 'Approved' },
+    create: { username: 'exec_user', email: 'sujal@exec.com', password_hash: passwordHash, role: Role.Executive, status: 'Approved' },
+  });
+
+  console.log('Database seeded with 4 RBAC test users! (Password: 1234)');
 }
 
 main()

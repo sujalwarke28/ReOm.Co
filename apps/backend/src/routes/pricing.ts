@@ -7,6 +7,7 @@ import { logAudit } from '../utils/audit';
 const router = Router();
 
 router.use(authenticateJWT);
+router.use(authorizeRoles('Admin'));
 
 // GET /api/pricing
 // Everyone can view pricing rules
@@ -22,20 +23,20 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 // POST /api/pricing
-// Only Managers and Admins can create pricing rules
-router.post('/', authorizeRoles('Manager', 'Admin'), async (req: AuthRequest, res: Response) => {
+router.post('/', async (req: AuthRequest, res: Response) => {
   try {
-    const { product_name, channel, price } = req.body;
+    const { product_name, channel, price, region } = req.body;
     
     const rule = await prisma.pricingRule.create({
       data: {
         product_name,
         channel,
-        price: parseFloat(price)
+        price: parseFloat(price),
+        region: region || 'Global'
       }
     });
 
-    await logAudit(req.user!.id, `Created Pricing Rule for ${product_name} on ${channel}`);
+    await logAudit(req.user!.id, `Created Pricing Rule for ${product_name} on ${channel} (Region: ${rule.region}, Price: $${rule.price})`);
     res.json({ success: true, data: rule });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
@@ -43,22 +44,34 @@ router.post('/', authorizeRoles('Manager', 'Admin'), async (req: AuthRequest, re
 });
 
 // PUT /api/pricing/:id
-// Only Managers and Admins can update prices
-router.put('/:id', authorizeRoles('Manager', 'Admin'), async (req: AuthRequest, res: Response) => {
+router.put('/:id', async (req: AuthRequest, res: Response) => {
   try {
     const ruleId = req.params.id as string;
-    const { price, status } = req.body;
+    const { price, status, region } = req.body;
 
     const rule = await prisma.pricingRule.update({
       where: { id: ruleId },
       data: {
         ...(price !== undefined && { price: parseFloat(price) }),
-        ...(status !== undefined && { status: status as any })
+        ...(status !== undefined && { status: status as any }),
+        ...(region !== undefined && { region })
       }
     });
 
-    await logAudit(req.user!.id, `Updated Pricing Rule ${rule.id} (Price: ${rule.price}, Status: ${rule.status})`);
+    await logAudit(req.user!.id, `Updated Pricing Rule ${rule.id} (Price: ${rule.price}, Status: ${rule.status}, Region: ${rule.region})`);
     res.json({ success: true, data: rule });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// DELETE /api/pricing/:id
+router.delete('/:id', async (req: AuthRequest, res: Response) => {
+  try {
+    const ruleId = req.params.id as string;
+    await prisma.pricingRule.delete({ where: { id: ruleId } });
+    await logAudit(req.user!.id, `Deleted Pricing Rule ${ruleId}`);
+    res.json({ success: true, message: 'Pricing rule deleted successfully' });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
   }

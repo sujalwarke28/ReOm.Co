@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import api from '../api/axios';
+import { useTheme } from '../contexts/ThemeContext';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
 
@@ -12,75 +13,74 @@ const fetchAnalytics = async (endpoint: string) => {
 };
 
 const Analytics: React.FC = () => {
-  const { data: tasksData, isLoading: loadingTasks } = useQuery({ queryKey: ['tasksAnalytics'], queryFn: () => fetchAnalytics('tasks') });
-  const { data: approvalsData, isLoading: loadingApprovals } = useQuery({ queryKey: ['approvalsAnalytics'], queryFn: () => fetchAnalytics('approvals') });
-  const { data: deptsData, isLoading: loadingDepts } = useQuery({ queryKey: ['deptsAnalytics'], queryFn: () => fetchAnalytics('departments') });
+  const { theme } = useTheme();
+  const labelColor = theme === 'dark' ? '#94a3b8' : '#4b5563';
+  const tickColor = theme === 'dark' ? '#64748b' : '#6b7280';
+  const gridColor = theme === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.06)';
 
-  if (loadingTasks || loadingApprovals || loadingDepts) {
-    return <div className="p-4 text-center">Loading Analytics...</div>;
-  }
+  const chartBaseOptions = {
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { color: labelColor, font: { family: 'Inter', size: 12 } } },
+    },
+  };
+  const { data: tasksData, isLoading: l1 } = useQuery({ queryKey: ['tasksAnalytics'], queryFn: () => fetchAnalytics('tasks') });
+  const { data: approvalsData, isLoading: l2 } = useQuery({ queryKey: ['approvalsAnalytics'], queryFn: () => fetchAnalytics('approvals') });
+  const { data: deptsData, isLoading: l3 } = useQuery({ queryKey: ['deptsAnalytics'], queryFn: () => fetchAnalytics('departments') });
+
+  if (l1 || l2 || l3) return (
+    <div className="page-wrapper"><div className="loading-screen"><div className="spinner" style={{ width: 32, height: 32, borderWidth: 3 }} /><span>Loading analytics...</span></div></div>
+  );
 
   const tasksChartData = {
     labels: tasksData?.labels || [],
-    datasets: [{
-      data: tasksData?.data || [],
-      backgroundColor: ['#ffc107', '#198754'],
-    }]
+    datasets: [{ data: tasksData?.data || [], backgroundColor: ['#f59e0b', '#10b981'], borderColor: 'transparent', hoverOffset: 6 }]
   };
 
   const approvalsChartData = {
     labels: approvalsData?.labels || [],
-    datasets: [{
-      label: 'Approvals by Status',
-      data: approvalsData?.data || [],
-      backgroundColor: ['#ffc107', '#198754', '#dc3545'],
-    }]
+    datasets: [{ label: 'Count', data: approvalsData?.data || [], backgroundColor: ['#f59e0b', '#10b981', '#ef4444'], borderRadius: 6, borderWidth: 0 }]
   };
 
   const deptsChartData = {
     labels: deptsData?.labels || [],
-    datasets: [{
-      label: 'Tasks Created by Role',
-      data: deptsData?.data || [],
-      backgroundColor: ['#0dcaf0', '#6f42c1', '#fd7e14', '#20c997'],
-    }]
+    datasets: [{ label: 'Tasks Created', data: deptsData?.data || [], backgroundColor: ['#38bdf8', '#8b5cf6', '#f59e0b', '#10b981'], borderRadius: 6, borderWidth: 0 }]
+  };
+
+  const barOptions = {
+    ...chartBaseOptions,
+    scales: {
+      x: { ticks: { color: tickColor }, grid: { color: gridColor } },
+      y: { ticks: { color: tickColor }, grid: { color: gridColor } },
+    },
   };
 
   return (
-    <div className="container-fluid py-4">
-      <h2 className="mb-4">Reporting & Analytics</h2>
-      
-      <div className="row g-4">
-        <div className="col-md-4">
-          <div className="card shadow-sm border-0 h-100">
-            <div className="card-body">
-              <h5 className="card-title text-center mb-4">Task Status Distribution</h5>
-              <div style={{ height: '300px', display: 'flex', justifyContent: 'center' }}>
-                <Doughnut data={tasksChartData} options={{ maintainAspectRatio: false }} />
-              </div>
-            </div>
+    <div className="page-wrapper">
+      <div className="page-header">
+        <div className="page-title">Reporting & Analytics</div>
+        <div className="page-subtitle">Task and approval metrics across the organization</div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20 }}>
+        <div className="section-card">
+          <div className="section-card-header"><div className="section-card-title">Task Status Distribution</div></div>
+          <div className="section-card-body" style={{ height: 280 }}>
+            <Doughnut data={tasksChartData} options={chartBaseOptions} />
           </div>
         </div>
 
-        <div className="col-md-4">
-          <div className="card shadow-sm border-0 h-100">
-            <div className="card-body">
-              <h5 className="card-title text-center mb-4">Approval Requests</h5>
-              <div style={{ height: '300px' }}>
-                <Bar data={approvalsChartData} options={{ maintainAspectRatio: false }} />
-              </div>
-            </div>
+        <div className="section-card">
+          <div className="section-card-header"><div className="section-card-title">Approval Requests</div></div>
+          <div className="section-card-body" style={{ height: 280 }}>
+            <Bar data={approvalsChartData} options={barOptions as any} />
           </div>
         </div>
 
-        <div className="col-md-4">
-          <div className="card shadow-sm border-0 h-100">
-            <div className="card-body">
-              <h5 className="card-title text-center mb-4">Department Load (Tasks)</h5>
-              <div style={{ height: '300px' }}>
-                <Bar data={deptsChartData} options={{ maintainAspectRatio: false }} />
-              </div>
-            </div>
+        <div className="section-card">
+          <div className="section-card-header"><div className="section-card-title">Department Task Load</div></div>
+          <div className="section-card-body" style={{ height: 280 }}>
+            <Bar data={deptsChartData} options={barOptions as any} />
           </div>
         </div>
       </div>
