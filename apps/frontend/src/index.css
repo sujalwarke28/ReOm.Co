@@ -313,7 +313,7 @@ a:hover { color: var(--accent-light); }
   display: inline-flex; align-items: center; gap: 4px;
   padding: 3px 10px; border-radius: 999px;
   font-size: 11px; font-weight: 600; letter-spacing: 0.04em;
-  text-transform: uppercase;
+  text-transform: uppercase; white-space: nowrap !important;
 }
 .badge-pending   { background: var(--warning-subtle); color: var(--warning); }
 .badge-completed { background: var(--success-subtle); color: var(--success); }
