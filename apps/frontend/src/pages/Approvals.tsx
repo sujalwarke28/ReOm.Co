@@ -173,7 +173,7 @@ const Approvals: React.FC = () => {
                     <tr key={app.id}>
                       <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{app.request_title}</td>
                       <td>
-                        <span className={`badge-status ${app.status === 'Approved' ? 'badge-approved' : app.status === 'Rejected' ? 'badge-rejected' : 'badge-pending'}`}>
+                        <span className={`badge-status ${app.status === 'Approved' ? 'badge-approved' : app.status === 'Rejected' ? 'badge-rejected' : 'badge-pending'}`} style={{ whiteSpace: 'nowrap' }}>
                           {app.status === 'Approved' ? '✓' : app.status === 'Rejected' ? '✕' : '●'} {app.status}
                         </span>
                       </td>

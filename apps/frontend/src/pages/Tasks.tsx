@@ -185,7 +185,7 @@ const Tasks: React.FC = () => {
                       {task.description || <em style={{ color: 'var(--text-muted)' }}>—</em>}
                     </td>
                     <td>
-                      <span className={`badge-status ${task.status === 'Completed' ? 'badge-completed' : 'badge-pending'}`}>
+                      <span className={`badge-status ${task.status === 'Completed' ? 'badge-completed' : 'badge-pending'}`} style={{ whiteSpace: 'nowrap' }}>
                         {task.status === 'Completed' ? '✓' : '●'} {task.status}
                       </span>
                     </td>
