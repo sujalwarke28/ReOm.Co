@@ -9,8 +9,8 @@ const router = Router();
 router.use(authenticateJWT);
 
 // GET /api/users/assignable - Lightweight user list for task assignment dropdown
-// Accessible to Admin, Executive, and Manager
-router.get('/assignable', authorizeRoles('Admin', 'Executive', 'Manager'), async (req: AuthRequest, res: Response) => {
+// Accessible to all roles
+router.get('/assignable', authorizeRoles('Admin', 'Executive', 'Manager', 'OperationalStaff'), async (req: AuthRequest, res: Response) => {
   try {
     const users = await prisma.user.findMany({
       where: { status: 'Approved' },
