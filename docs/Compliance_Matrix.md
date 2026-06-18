@@ -19,7 +19,7 @@ This matrix maps original problem statement requirements to their design impleme
 | 13 | Cloud Architecture | Phase 0/16 | Completed |
 | 14 | Linux Administration Readiness | Phase 14/15 | Completed |
 | 15 | Nginx Deployment | Phase 14 | Completed |
-| 16 | PostgreSQL Database | Phase 1 | Completed |
+| 16 | MySQL Database (AWS RDS) | Phase 1 | Completed |
 | 17 | Docker Containerization | Phase 13 | Completed |
 | 18 | Cloud Networking Readiness | Phase 16 | Completed |
 | 19 | Resource Monitoring | Phase 7 | Completed |

@@ -143,7 +143,7 @@ git clone https://github.com/sujalwarke28/ReOm.Co.git /opt/reomco
 That's it! 
 
 Once you have done all of the above:
-1. I have already integrated the **Neon Database Connection String** you provided me directly into the `docker-compose.yml` file.
+1. I have already integrated the **AWS RDS Database Connection String** you provided me directly into the `docker-compose.yml` file.
 2. Tell me you are ready.
 3. I will push a small update to GitHub. 
 4. The GitHub Actions pipeline will see the update, grab your 3 secrets, log into the server, and automatically spin up the website using Docker!

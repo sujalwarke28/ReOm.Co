@@ -20,7 +20,7 @@ The architecture utilizes a multi-tier subnet strategy across two Availability Z
 ### Tier 2: Private Application Subnets
 - **CIDR**: `10.0.3.0/24` and `10.0.4.0/24`
 - **Resources**: EC2 Instances running the Docker Compose stack (Frontend Nginx, Backend PM2 Cluster).
-- **Routing**: NO direct internet access. Outbound traffic is routed through the NAT Gateway in the Public Subnet (required for Docker pulls and Neon DB connections).
+- **Routing**: NO direct internet access. Outbound traffic is routed through the NAT Gateway in the Public Subnet (required for Docker pulls and AWS RDS DB connections).
 
 ## 3. Security Groups (Firewall Rules)
 
@@ -39,10 +39,10 @@ To enforce the Principle of Least Privilege at the network layer, Security Group
 | Inbound   | TCP      | 80   | sg-reomco-alb | Allow Nginx frontend traffic *only* from ALB |
 | Inbound   | TCP      | 3000 | sg-reomco-alb | Allow Node API traffic *only* from ALB |
 | Inbound   | TCP      | 22   | Corporate IP | Allow SSH access for Admins |
-| Outbound  | TCP      | 443  | 0.0.0.0/0 | Allow outbound HTTPS (for Neon DB, AWS APIs) |
-| Outbound  | TCP      | 5432 | 0.0.0.0/0 | Allow outbound PostgreSQL connection to Neon |
+| Outbound  | TCP      | 443  | 0.0.0.0/0 | Allow outbound HTTPS (for AWS RDS, AWS APIs) |
+| Outbound  | TCP      | 3306 | 0.0.0.0/0 | Allow outbound MySQL connection to AWS RDS |
 
-## 4. Database Connectivity (Neon)
-Because Neon is a managed, serverless PostgreSQL provider hosted outside of our VPC, the EC2 instances connect to it securely over the internet.
-- Connection strings must use `sslmode=require`.
-- The NAT Gateway provides a static Elastic IP. Neon's firewall rules should be configured to whitelist *only* the Elastic IP of the NAT Gateway, preventing any other IPs from attempting to authenticate to the database.
+## 4. Database Connectivity (AWS RDS)
+Because AWS RDS is a managed MySQL provider, the EC2 instances connect to it securely.
+- Connection strings must use `sslmode=require` if applicable.
+- AWS RDS security groups should be configured to whitelist *only* the Elastic IP of the NAT Gateway, preventing any other IPs from attempting to authenticate to the database.

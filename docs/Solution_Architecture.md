@@ -22,8 +22,8 @@ RetailEdge Omnichannel Commerce Cloud (ReOm.Co) is an enterprise-grade web appli
 - **Authentication**: JWT & bcrypt
 
 ### 3. Database
-- **Engine**: PostgreSQL
-- **Hosting**: Neon
+- **Engine**: MySQL
+- **Hosting**: AWS RDS
 - **Features**: Relational data modeling for users, tasks, approvals, reporting, and auditing.
 
 ### 4. Infrastructure & Deployment
@@ -35,7 +35,7 @@ RetailEdge Omnichannel Commerce Cloud (ReOm.Co) is an enterprise-grade web appli
 ## High-Level Architecture Flow
 1. **Client** (Browser) accesses the frontend via **Nginx** acting as a reverse proxy.
 2. The **Frontend** authenticates and interacts with the **Backend REST API**.
-3. The **Backend** processes requests, enforces RBAC, and communicates with the **PostgreSQL (Neon)** database via Prisma ORM.
-4. The entire stack (except the hosted Neon database) is containerized via **Docker** and deployed on **AWS EC2** within a secure **VPC**.
+3. The **Backend** processes requests, enforces RBAC, and communicates with the **MySQL (AWS RDS)** database via Prisma ORM.
+4. The entire stack (except the hosted AWS RDS database) is containerized via **Docker** and deployed on **AWS EC2** within a secure **VPC**.
 5. Automated scripts handle backups (to **AWS S3**) and deployments.
 6. **AWS CloudWatch** aggregates logs and monitors system metrics.

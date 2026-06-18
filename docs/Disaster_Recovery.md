@@ -4,7 +4,7 @@ This document outlines the backup automation and disaster recovery procedures fo
 
 ## 1. Automated Backups
 
-The system uses a shell script (`scripts/backup.sh`) to automate database dumps. This script creates a full `.sql` dump using `pg_dump`, compresses it, and prunes local files older than 7 days.
+The system uses a shell script (`scripts/backup.sh`) to automate database dumps. This script creates a full `.sql` dump using `mysqldump`, compresses it, and prunes local files older than 7 days.
 
 ### Setting up the Cron Job
 
@@ -43,7 +43,7 @@ If a catastrophic database failure occurs, follow these steps to restore from th
 ### Step 1: Retrieve the Backup
 If the instance is lost, retrieve the latest backup from S3 to a newly provisioned server:
 ```bash
-aws s3 cp s3://reomco-db-backups-prod/postgres/reomco_backup_YYYYMMDD_HHMMSS.sql.tar.gz .
+aws s3 cp s3://reomco-db-backups-prod/mysql/reomco_backup_YYYYMMDD_HHMMSS.sql.tar.gz .
 ```
 
 ### Step 2: Extract the Backup
@@ -53,14 +53,13 @@ tar -xzvf reomco_backup_YYYYMMDD_HHMMSS.sql.tar.gz
 
 ### Step 3: Recreate the Database
 ```bash
-dropdb -U reomco_admin -h localhost reomco_db
-createdb -U reomco_admin -h localhost reomco_db
+mysql -u reomco_admin -h localhost -p -e "DROP DATABASE IF EXISTS reomco_db; CREATE DATABASE reomco_db;"
 ```
 
 ### Step 4: Restore the Data
-Use `psql` to import the `.sql` dump into the fresh database:
+Use `mysql` to import the `.sql` dump into the fresh database:
 ```bash
-psql -U reomco_admin -h localhost -d reomco_db -f reomco_backup_YYYYMMDD_HHMMSS.sql
+mysql -u reomco_admin -h localhost -p reomco_db < reomco_backup_YYYYMMDD_HHMMSS.sql
 ```
 
 Verify that the application backend successfully reconnects and functions properly.

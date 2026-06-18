@@ -1,7 +1,7 @@
 # Database Design & ER Diagram
 
 ## Overview
-The database uses PostgreSQL to manage application state across users, tasks, approvals, reports, auditing, and system alerts.
+The database uses MySQL to manage application state across users, tasks, approvals, reports, auditing, and system alerts.
 
 ## Schema Definitions
 

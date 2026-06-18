@@ -29,7 +29,7 @@ graph TD
             EC2 -->|Hosts| Frontend(React App)
             EC2 -->|Hosts| Backend(Node.js API)
             
-            Backend --> DBConn[(Neon PostgreSQL Cloud)]
+            Backend --> DBConn[(AWS RDS MySQL)]
         end
     end
     

@@ -22,7 +22,7 @@ Shell scripts will manage lifecycle tasks:
 
 ## Environment Variables
 A centralized `.env` file will manage:
-- Database connection strings (Neon).
+- Database connection strings (AWS RDS).
 - JWT Secrets.
 - Port configurations.
 - Cloud provider credentials (AWS Access Keys).

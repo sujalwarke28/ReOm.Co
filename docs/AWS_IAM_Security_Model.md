@@ -16,7 +16,7 @@ This role is attached to the EC2 instances (via an Instance Profile) running the
             "Action": [
                 "s3:PutObject"
             ],
-            "Resource": "arn:aws:s3:::reomco-db-backups-prod/postgres/*"
+            "Resource": "arn:aws:s3:::reomco-db-backups-prod/mysql/*"
         },
         {
             "Sid": "AllowCloudWatchLogging",
